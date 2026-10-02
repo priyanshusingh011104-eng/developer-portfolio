@@ -1,0 +1,330 @@
+@import "tailwindcss";
+
+:root {
+  --background: #080808;
+  --background-secondary: #0d0d0f;
+
+  --foreground: #f5f5f5;
+  --muted: #a1a1aa;
+
+  --border: rgba(255, 255, 255, 0.08);
+
+  --accent: #7c5cff;
+  --accent-secondary: #4f7cff;
+
+  --container-width: 1280px;
+}
+
+/* =========================================================
+   BASE
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 110px;
+}
+
+body {
+  margin: 0;
+
+  background: var(--background);
+  color: var(--foreground);
+
+  font-family:
+    var(--font-geist-sans),
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   GLOBAL BACKGROUND GRID
+========================================================= */
+
+.global-grid {
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    );
+
+  background-size: 70px 70px;
+}
+
+/* =========================================================
+   GLOBAL NOISE
+========================================================= */
+
+.global-noise {
+  background-image:
+    repeating-radial-gradient(
+      circle at 0 0,
+      rgba(255, 255, 255, 0.18) 0,
+      rgba(255, 255, 255, 0.18) 0.5px,
+      transparent 0.8px,
+      transparent 3px
+    );
+
+  background-size: 5px 5px;
+
+  mix-blend-mode: soft-light;
+}
+
+/* =========================================================
+   CUSTOM CURSOR
+========================================================= */
+
+@media (pointer: fine) {
+  body,
+  a,
+  button,
+  [role="button"],
+  [data-cursor] {
+    cursor: none;
+  }
+
+  input,
+  textarea,
+  select {
+    cursor: auto;
+  }
+}
+
+/* =========================================================
+   SELECTION
+========================================================= */
+
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #080808;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #242424;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #343434;
+}
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.container-custom {
+  width: min(
+    calc(100% - 40px),
+    var(--container-width)
+  );
+
+  margin-inline: auto;
+}
+
+/* =========================================================
+   GRADIENT TEXT
+========================================================= */
+
+.gradient-text {
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #c4b5fd 38%,
+    #8b5cf6 72%,
+    #6366f1 100%
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  color: transparent;
+}
+
+/* =========================================================
+   BACKGROUND GLOW
+========================================================= */
+
+.background-glow {
+  position: fixed;
+
+  width: 600px;
+  height: 600px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(
+      124,
+      92,
+      255,
+      0.12
+    );
+
+  filter: blur(140px);
+
+  pointer-events: none;
+
+  z-index: -1;
+}
+
+/* =========================================================
+   GLASS
+========================================================= */
+
+.glass {
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.03
+    );
+
+  border:
+    1px solid
+    var(--border);
+
+  backdrop-filter: blur(20px);
+
+  -webkit-backdrop-filter:
+    blur(20px);
+}
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.section-spacing {
+  padding-top: 120px;
+  padding-bottom: 120px;
+}
+
+/* =========================================================
+   HEADINGS
+========================================================= */
+
+.section-heading {
+  font-size:
+    clamp(
+      2.5rem,
+      6vw,
+      5rem
+    );
+
+  font-weight: 600;
+
+  letter-spacing: -0.05em;
+
+  line-height: 0.95;
+}
+
+/* =========================================================
+   TEXT
+========================================================= */
+
+.text-muted {
+  color: var(--muted);
+}
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline:
+    2px solid
+    rgba(
+      167,
+      139,
+      250,
+      0.85
+    );
+
+  outline-offset: 4px;
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (
+  prefers-reduced-motion:
+  reduce
+) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration:
+      0.01ms !important;
+
+    animation-iteration-count:
+      1 !important;
+
+    transition-duration:
+      0.01ms !important;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+  max-width: 768px
+) {
+  html {
+    scroll-padding-top: 90px;
+  }
+
+  .container-custom {
+    width: min(
+      calc(100% - 28px),
+      var(--container-width)
+    );
+  }
+
+  .section-spacing {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  .global-grid {
+    background-size: 46px 46px;
+    opacity: 0.12;
+  }
+
+  .global-noise {
+    opacity: 0.02;
+  }
+}
