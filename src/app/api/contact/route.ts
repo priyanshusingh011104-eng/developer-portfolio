@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(
-  process.env.RESEND_API_KEY
-);
-
 type ContactRequest = {
   name?: string;
   email?: string;
@@ -27,9 +23,14 @@ export async function POST(
   request: Request
 ) {
   try {
-    
+    const apiKey =
+      process.env.RESEND_API_KEY;
 
-    if (!process.env.RESEND_API_KEY) {
+    if (!apiKey) {
+      console.error(
+        "RESEND_API_KEY is missing"
+      );
+
       return NextResponse.json(
         {
           success: false,
@@ -41,6 +42,9 @@ export async function POST(
         }
       );
     }
+
+    const resend =
+      new Resend(apiKey);
 
     const body =
       (await request.json()) as ContactRequest;
@@ -63,20 +67,15 @@ export async function POST(
     const website =
       body.website?.trim() ?? "";
 
-    /*
-      Honeypot spam check.
-      Real users will not fill this hidden field.
-    */
+    // Honeypot spam field
     if (website) {
       return NextResponse.json({
         success: true,
-        message: "Message sent successfully.",
+        message:
+          "Message sent successfully.",
       });
     }
 
-    /*
-      Required field validation
-    */
     if (
       !name ||
       !email ||
@@ -95,9 +94,6 @@ export async function POST(
       );
     }
 
-    /*
-      Basic email validation
-    */
     const emailPattern =
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -114,9 +110,6 @@ export async function POST(
       );
     }
 
-    /*
-      Length validation
-    */
     if (name.length > 100) {
       return NextResponse.json(
         {
@@ -182,10 +175,6 @@ export async function POST(
       );
     }
 
-    /*
-      Escape user content before inserting it
-      into the HTML email.
-    */
     const safeName =
       escapeHtml(name);
 
@@ -206,19 +195,12 @@ export async function POST(
         "<br />"
       );
 
-    /*
-      IMPORTANT:
-      For testing we are sending to:
-      delivered@resend.dev
-
-      After this works, we will replace
-      it with your Gmail address.
-    */
     const { data, error } =
       await resend.emails.send({
         from:
           "Portfolio <onboarding@resend.dev>",
 
+        // keep the Resend-approved test address for now
         to: [
           "priyanshu210620@gmail.com",
         ],
@@ -270,89 +252,36 @@ export async function POST(
                 New inquiry from ${safeName}
               </h1>
 
-              <div
-                style="
-                  margin-bottom:24px;
-                "
-              >
-                <p
-                  style="
-                    margin:8px 0;
-                    color:#a1a1aa;
-                  "
-                >
-                  <strong
-                    style="
-                      color:#ffffff;
-                    "
-                  >
-                    Name:
-                  </strong>
+              <p style="color:#a1a1aa;">
+                <strong style="color:#ffffff;">
+                  Email:
+                </strong>
+                ${safeEmail}
+              </p>
 
-                  ${safeName}
-                </p>
+              <p style="color:#a1a1aa;">
+                <strong style="color:#ffffff;">
+                  Company:
+                </strong>
+                ${safeCompany}
+              </p>
 
-                <p
-                  style="
-                    margin:8px 0;
-                    color:#a1a1aa;
-                  "
-                >
-                  <strong
-                    style="
-                      color:#ffffff;
-                    "
-                  >
-                    Email:
-                  </strong>
-
-                  ${safeEmail}
-                </p>
-
-                <p
-                  style="
-                    margin:8px 0;
-                    color:#a1a1aa;
-                  "
-                >
-                  <strong
-                    style="
-                      color:#ffffff;
-                    "
-                  >
-                    Company:
-                  </strong>
-
-                  ${safeCompany}
-                </p>
-
-                <p
-                  style="
-                    margin:8px 0;
-                    color:#a1a1aa;
-                  "
-                >
-                  <strong
-                    style="
-                      color:#ffffff;
-                    "
-                  >
-                    Opportunity:
-                  </strong>
-
-                  ${safeProject}
-                </p>
-              </div>
+              <p style="color:#a1a1aa;">
+                <strong style="color:#ffffff;">
+                  Opportunity:
+                </strong>
+                ${safeProject}
+              </p>
 
               <div
                 style="
                   border-top:1px solid #27272a;
-                  padding-top:22px;
+                  margin-top:24px;
+                  padding-top:24px;
                 "
               >
                 <p
                   style="
-                    margin:0 0 12px;
                     color:#71717a;
                     font-size:12px;
                     letter-spacing:1.5px;
@@ -364,7 +293,6 @@ export async function POST(
 
                 <p
                   style="
-                    margin:0;
                     color:#d4d4d8;
                     line-height:1.7;
                   "
@@ -377,8 +305,12 @@ export async function POST(
         `,
       });
 
-
     if (error) {
+      console.error(
+        "Resend error:",
+        error
+      );
+
       return NextResponse.json(
         {
           success: false,
@@ -400,7 +332,7 @@ export async function POST(
     });
   } catch (error) {
     console.error(
-      "CONTACT API ERROR:",
+      "Contact API error:",
       error
     );
 
